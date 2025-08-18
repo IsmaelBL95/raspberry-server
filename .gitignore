@@ -1,5 +1,21 @@
+# Dependencias
 backend/node_modules/
+
+# Datos persistentes de MongoDB
 data/
+
+# Configuración sensible
 *.env
+
+# Logs
 *.log
+
+# Configuración de IDE
 .vscode/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivo de documentación que no quieres versionar
+/Estructura de carpetas y archivos.txt
