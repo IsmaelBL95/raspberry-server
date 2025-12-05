@@ -1,8 +1,7 @@
 # 📦 rasp-server
 
 Servidor local para Raspberry Pi basado en contenedores Docker.  
-Incluye un frontend en React, un backend en Node.js (Express + Socket.IO) y una base de datos MongoDB.  
-Permite registrar movimientos financieros y un chat en tiempo real accesible desde la red local.
+Incluye un frontend en React, un backend en Node.js (Express + Socket.IO) y una base de datos MongoDB.
 
 ---
 
@@ -16,11 +15,24 @@ Permite registrar movimientos financieros y un chat en tiempo real accesible des
 
 ## 📂 Estructura del proyecto
 rasp-server/
-├── backend/ # API REST + WebSockets
-├── frontend/ # Aplicación React
-├── nginx/ # Configuración Nginx
-├── data/ # Datos persistentes de MongoDB
-└── docker-compose.yml
+├── .gitignore
+├── README.md
+├── backend/
+│   ├── Dockerfile
+│   ├── package.json
+│   └── server.js
+├── data/ (Volumen de datos de MongoDB)
+├── docker-compose.yml
+├── frontend/ (Mencionado en README, sin archivos)
+└── nginx/
+    ├── conf.d/
+    │   └── app.conf
+    ├── nginx.conf
+    └── snippets/
+        ├── caching.conf
+        ├── gzip.conf (No incluido en app.conf, pero presente)
+        ├── proxy-params.conf
+        └── security-headers.conf
 
 ---
 
@@ -29,20 +41,6 @@ Aprender y practicar una arquitectura moderna de despliegue local:
 - 🐳 Uso de Docker para aislar servicios.  
 - 🌐 Servir una app web accesible en la red local.  
 - 📡 Comunicación en tiempo real mediante WebSockets.
-
----
-
-## 📦 Próximos pasos
-1. Dockerizar MongoDB ✅
-2. Añadir backend API REST ✅
-3. Crear frontend en React ✅
-4. Integrar Nginx como proxy inverso ✅
-5. Despliegue en Raspberry Pi ✅
-
----
-
-## 📸 Diagrama (próximamente)
-*(Aquí irá un esquema del stack cuando esté definido)*
 
 ---
 
