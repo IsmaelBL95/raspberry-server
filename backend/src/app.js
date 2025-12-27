@@ -1,13 +1,23 @@
 // src/app.js
 import express from 'express'
-import router from './routes.js'
+import state from './state.js'
 
-const app = express()
+export function createApp() {
+  const app = express()
 
-// Middleware para poder leer JSON en el body
-app.use(express.json())
+  app.get('/healthz', (req, res) => {
+    res.status(200).json({ ok: true })
+  })
 
-// Montamos todas las rutas bajo /api
-app.use('/api', router)
+  app.get('/readyz', (req, res) => {
+    const ready = state.mode === 'NORMAL'
+    res.status(ready ? 200 : 503).json({
+      ready,
+      mode: state.mode,
+      db: state.db,
+      dbError: state.dbError,
+    })
+  })
 
-export default app
+  return app
+}
