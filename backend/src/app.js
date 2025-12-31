@@ -1,23 +1,10 @@
-// src/app.js
-import express from 'express'
-import state from './state.js'
+// backend/src/app.js
 
-export function createApp() {
-  const app = express()
+import express from 'express';
+import apiRouter from './routes/index.js';
 
-  app.get('/healthz', (req, res) => {
-    res.status(200).json({ ok: true })
-  })
+const app = express();
 
-  app.get('/readyz', (req, res) => {
-    const ready = state.mode === 'NORMAL'
-    res.status(ready ? 200 : 503).json({
-      ready,
-      mode: state.mode,
-      db: state.db,
-      dbError: state.dbError,
-    })
-  })
+app.use('/api', apiRouter);
 
-  return app
-}
+export default app;

@@ -1,22 +1,31 @@
-// server.js
-import { createApp } from './app.js'
-import { connectDb } from './db.js'
-import state from './state.js'
-import { PORT } from './config.js'
+// backend/src/server.js
 
-async function start() {
-  const app = createApp()
+import app from './app.js';
+import {
+  setServerStatus,
+  setBootstrapStatus,
+  setDbStatus,
+  ServerStatus,
+  BootstrapStatus,
+  DbStatus,
+} from './state.js';
 
-  await connectDb() // ajusta state.db/state.mode en caso de error
+const PORT = process.env.PORT || 5000;
 
-  // Aún no decidimos NORMAL vs BOOTSTRAP; lo haremos en el siguiente paso.
-  if (state.mode !== 'ERROR') state.mode = 'BOOTING'
+/**
+ * Estados iniciales del proceso
+ */
+setServerStatus(ServerStatus.BOOTING);
+setBootstrapStatus(BootstrapStatus.PENDING);
+setDbStatus(DbStatus.DISCONNECTED);
 
-  console.log('Estado inicial:', state)
+/**
+ * Arranque del servidor HTTP
+ */
+app.listen(PORT, () => {
+  setServerStatus(ServerStatus.RUNNING);
+  console.log(`Servidor escuchando en http://localhost:${PORT}`);
+});
 
-  app.listen(PORT, () => {
-    console.log(`Servidor escuchando en http://localhost:${PORT}`)
-  })
-}
-
-start()
+// bootstrap()
+// connectToDatabase()
