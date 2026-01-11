@@ -18,4 +18,4 @@ data/
 Thumbs.db
 
 # Archivo de documentación que no quieres versionar
-/Estructura de carpetas y archivos.txt
+*secretos.txt
