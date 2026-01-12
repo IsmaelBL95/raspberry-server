@@ -1,25 +1,31 @@
 // src/main.js
 
 import createApp from './http/app.js';
-import startServer from './http/server.js';
-import { logger } from './core/logger.js';
+import * as server from './http/server.js';
+import * as mongo from './db/mongo.js';
+import { validateEnv } from './core/env.js';
+import logger from './core/logger.js';
 
 export default async function main() {
-  logger.info('Starting server...');
-
+  const { PORT, MONGO_URI } = validateEnv();
   const app = createApp();
-  const { server, port } = await startServer(app);
 
-  const shutdown = signal => {
-    logger.info(`${signal} received. Shutting down...`);
-    server.close(() => {
-      logger.shutdown('Server shut down gracefully.');
-      process.exit(0);
-    });
-  };
+  logger.info('Starting HTTP server.');
+  server.start(app, PORT);
 
-  process.on('SIGINT', shutdown);
-  process.on('SIGTERM', shutdown);
+  logger.info('Connecting to MongoDB.');
+  mongo.start(MONGO_URI);
 
-  logger.success(`Server listening on port ${port}.`);
+
+  process.on('SIGINT', async () => {
+    logger.info('SIGINT received: closing HTTP server.');
+    await server.stop();
+    process.exit(0);
+  });
+
+  process.on('SIGTERM', async () => {
+    logger.info('SIGTERM received: closing HTTP server.');
+    await server.stop();
+    process.exit(0);
+  });
 }
