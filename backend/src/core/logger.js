@@ -2,7 +2,7 @@
 
 const icons = {
   info:    "🔵",
-  success: "🟢",
+  success: "🟢", // Used when a process completes successfully.
   warn:    "🟠",
   error:   "🔴",
   fatal:   "⚫",
