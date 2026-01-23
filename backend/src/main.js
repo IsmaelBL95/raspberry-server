@@ -1,31 +1,60 @@
 // src/main.js
-
-import createApp from './http/app.js';
-import * as server from './http/server.js';
-import * as mongo from './db/mongo.js';
-import { validateEnv } from './core/env.js';
 import logger from './core/logger.js';
+import { start as startServer, stop as stopServer } from './http/server.js';
+import {
+  connect as connectDB,
+  disconnect as disconnectDB,
+  enableRuntimeMonitoring,
+} from './db/mongo.js';
 
-export default async function main() {
-  const { PORT, MONGO_URI } = validateEnv();
-  const app = createApp();
+const MAX_TRIES = 3;
 
-  logger.info('Starting HTTP server.');
-  server.start(app, PORT);
+async function boot() {
+  // ---- SERVER (obligatorio) ----
+  logger.info('Starting server');
 
-  logger.info('Connecting to MongoDB.');
-  mongo.start(MONGO_URI);
+  let serverStarted = false;
+  for (let i = 0; i < MAX_TRIES; i++) {
+    try {
+      await startServer();
+      serverStarted = true;
+      break;
+    } catch {}
+  }
 
+  if (!serverStarted) {
+    process.exit(1);
+  }
 
-  process.on('SIGINT', async () => {
-    logger.info('SIGINT received: closing HTTP server.');
-    await server.stop();
-    process.exit(0);
-  });
+  // ---- MONGO (opcional) ----
+  logger.info('Connecting to database');
 
-  process.on('SIGTERM', async () => {
-    logger.info('SIGTERM received: closing HTTP server.');
-    await server.stop();
-    process.exit(0);
-  });
+  let mongoConnected = false;
+  for (let i = 0; i < MAX_TRIES; i++) {
+    try {
+      await connectDB();
+      mongoConnected = true;
+      break;
+    } catch {}
+  }
+
+  if (!mongoConnected) {
+    logger.error('Failed to connect to MongoDB after all retries.');
+    return; // app viva sin DB
+  }
+
+  // ---- RUNTIME MONITORING ----
+  enableRuntimeMonitoring();
 }
+
+async function shutdown() {
+  logger.info('Shutting down application');
+  await disconnectDB();
+  await stopServer();
+  process.exit(0);
+}
+
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
+
+export default boot;

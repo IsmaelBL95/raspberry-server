@@ -1,62 +1,70 @@
+// src/db/mongo.js
 import mongoose from 'mongoose';
+import { validateEnv } from '../core/env.js';
 import logger from '../core/logger.js';
-import { setMongoState, MONGO_STATES } from '../core/state.js';
 
-const RETRY_DELAYS = [0, 5000, 15000, 30000, 60000]; // ms
-let attempt = 0;
-let connected = false;
+const STATES = Object.freeze({
+  DISCONNECTED: 'DISCONNECTED',
+  CONNECTED: 'CONNECTED',
+});
 
-function attemptConnection(uri) {
-  const delay = RETRY_DELAYS[attempt];
+let dbState = STATES.DISCONNECTED;
+let runtimeListenersEnabled = false;
 
-  if (delay > 0) {
-    setTimeout(() => connect(uri), delay);
-    return;
+export async function connect() {
+  if (dbState === STATES.CONNECTED) return;
+
+  const { MONGO_URI } = validateEnv();
+
+  try {
+    await mongoose.connect(MONGO_URI, {
+      serverSelectionTimeoutMS: 10_000,
+      connectTimeoutMS: 10_000,
+    });
+
+    dbState = STATES.CONNECTED;
+    logger.success('MongoDB connected');
+  } catch (err) {
+    dbState = STATES.DISCONNECTED;
+    logger.error(`MongoDB error: ${err.message}`);
+
+    try { await mongoose.disconnect(); } catch {}
+    throw err; // permite reintento en main.js
   }
-
-  connect(uri);
 }
 
-function connect(uri) {
-  mongoose.connect(uri).catch(() => {
-    if (attempt === 0) {
-      logger.error('MongoDB initial connection failed. Retrying connection…');
-    } else if (attempt < RETRY_DELAYS.length - 1) {
-      logger.error(
-        `MongoDB connection failed. Retrying in ${RETRY_DELAYS[attempt] / 1000} seconds…`
-      );
-    } else {
-      logger.error('MongoDB connection failed.');
-      return; // dejamos de reintentar
-    }
-
-    attempt++;
-    attemptConnection(uri);
-  });
-}
-
-export function start(uri) {
-  setMongoState(MONGO_STATES.DISCONNECTED);
-  attemptConnection(uri);
+export function enableRuntimeMonitoring() {
+  if (runtimeListenersEnabled) return;
+  runtimeListenersEnabled = true;
 
   mongoose.connection.on('connected', () => {
-    connected = true;
-    attempt = 0;
-    setMongoState(MONGO_STATES.CONNECTED);
-    logger.success('MongoDB connected.');
+    if (dbState !== STATES.CONNECTED) {
+      dbState = STATES.CONNECTED;
+      logger.success('MongoDB connected');
+    }
   });
 
   mongoose.connection.on('disconnected', () => {
-    if (!connected) return;
-
-    connected = false;
-    setMongoState(MONGO_STATES.DISCONNECTED);
-    logger.warn('MongoDB disconnected.');
+    if (dbState !== STATES.DISCONNECTED) {
+      dbState = STATES.DISCONNECTED;
+      logger.warn('MongoDB disconnected');
+    }
   });
 
   mongoose.connection.on('error', err => {
-    if (connected) {
-      logger.error(`MongoDB error: ${err.message}`);
-    }
+    logger.error(`MongoDB error: ${err.message}`);
   });
 }
+
+export async function disconnect() {
+  if (dbState === STATES.DISCONNECTED) return;
+
+  await mongoose.disconnect();
+  dbState = STATES.DISCONNECTED;
+}
+
+export function getState() {
+  return dbState;
+}
+
+export { STATES as DB_STATES };
