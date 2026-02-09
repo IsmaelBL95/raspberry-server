@@ -1,0 +1,25 @@
+.app-shell {
+  margin: 0 auto;
+  max-width: 840px;
+  padding: 2rem;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+header {
+  margin-bottom: 1.5rem;
+}
+
+nav {
+  display: flex;
+  gap: 1rem;
+}
+
+nav a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
