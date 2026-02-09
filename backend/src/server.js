@@ -1,8 +1,32 @@
 // src/server.js
-import app from './app.js'
+// Encapsula el servidor HTTP: start/stop
 
-const PORT = 5000
+import http from "http";
 
-app.listen(PORT, () => {
-  console.log(`Servidor escuchando en http://localhost:${PORT}`)
-})
+export function createServer({ app, config }) {
+  const server = http.createServer(app);
+
+  return {
+    start() {
+      return new Promise((resolve, reject) => {
+        server.listen(config.port, config.host, () => {
+          console.log(`[server] escuchando en http://${config.host}:${config.port}`);
+          resolve();
+        });
+
+        server.on("error", reject);
+      });
+    },
+
+    stop() {
+      return new Promise((resolve, reject) => {
+        console.log("[server] cerrando servidor...");
+        server.close((err) => {
+          if (err) return reject(err);
+          console.log("[server] servidor cerrado");
+          resolve();
+        });
+      });
+    },
+  };
+}

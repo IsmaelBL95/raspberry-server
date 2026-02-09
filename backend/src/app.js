@@ -1,13 +1,29 @@
 // src/app.js
-import express from 'express'
-import router from './routes.js'
+// Construye la app Express. No gestiona ciclo de vida.
 
-const app = express()
+import express from "express";
+import { createHealthRouter } from "./routes/health.js";
 
-// Middleware para poder leer JSON en el body
-app.use(express.json())
+export function createApp({ config, deps }) {
+  const app = express();
 
-// Montamos todas las rutas bajo /api
-app.use('/api', router)
+  app.use(express.json());
 
-export default app
+  app.use("/health", createHealthRouter({ deps }));
+
+  app.get("/", (req, res) => {
+    res.json({ ok: true, service: config.serviceName });
+  });
+
+  app.use((req, res) => {
+    res.status(404).json({ error: "Not Found" });
+  });
+
+  // eslint-disable-next-line no-unused-vars
+  app.use((err, req, res, next) => {
+    console.error("[http] error:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  });
+
+  return app;
+}

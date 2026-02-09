@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Backend con Express 5 para servidor Raspberry Pi",
   "type": "module",
-  "main": "src/server.js",
+  "main": "src/index.js",
   "private": true,
   "author": "Ismael Benavente Linares",
   "license": "ISC",
@@ -11,11 +11,12 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "dev": "node --watch src/server.js",
-    "start": "node src/server.js",
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "dotenv": "^17.2.4",
     "express": "^5.2.1"
   }
 }
