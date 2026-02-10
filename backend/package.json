@@ -1,0 +1,20 @@
+{
+  "name": "rasp-server-backend",
+  "version": "1.0.0",
+  "description": "Backend for Raspberry Pi server",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js"
+  },
+  "keywords": [],
+  "author": "Ismael",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
