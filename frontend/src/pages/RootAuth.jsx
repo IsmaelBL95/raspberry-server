@@ -11,6 +11,7 @@ export default function RootAuth() {
   const [keyInput, setKeyInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState(null);
+  const [isBlocked, setIsBlocked] = useState(false);
 
   // Evita múltiples submits por StrictMode o re-renders
   const hasSubmittedRef = useRef(false);
@@ -72,11 +73,25 @@ export default function RootAuth() {
 
       if (res.status === 200) {
         setFeedback({ type: "success", message: "✅ Autenticación correcta" });
+        setIsBlocked(false);
         setTimeout(() => {
           navigate("/root/dashboard", { replace: true });
         }, 500);
-      } else {
+      } else if (res.status === 429) {
+        // Rate limit: bloqueado temporalmente
+        setFeedback({
+          type: "error",
+          message: "❌ Demasiados intentos. Inténtalo de nuevo más tarde.",
+        });
+        setIsBlocked(true);
+        setKeyInput("");
+      } else if (res.status === 401) {
+        // Clave incorrecta
         setFeedback({ type: "error", message: "❌ Clave incorrecta" });
+        setKeyInput("");
+      } else {
+        // Otros errores
+        setFeedback({ type: "error", message: "❌ Error de conexión" });
         setKeyInput("");
       }
     } catch {
@@ -113,7 +128,7 @@ export default function RootAuth() {
           type="password"
           value={keyInput}
           onChange={(e) => setKeyInput(e.target.value)}
-          disabled={loading}
+          disabled={loading || isBlocked}
           maxLength={16}
           placeholder="Introduce la clave (16 caracteres)"
           style={{ width: "100%", padding: "10px", fontSize: "16px" }}
@@ -133,7 +148,7 @@ export default function RootAuth() {
         </div>
 
         <div style={{ marginTop: "10px", fontSize: "12px", opacity: 0.7 }}>
-          {keyInput.length}/16
+          {!isBlocked ? `${keyInput.length}/16` : "Bloqueado temporalmente"}
         </div>
       </div>
     </div>

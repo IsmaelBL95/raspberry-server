@@ -1,5 +1,13 @@
 import cookie from "cookie";
-import { validateRootKey, generateJWT, verifyJWT } from "../services/rootAuthService.js";
+import {
+  validateRootKey,
+  generateJWT,
+  verifyJWT,
+  isBlocked,
+  getSecondsUntilUnblock,
+  recordFailedAttempt,
+  resetFailedAttempts,
+} from "../services/rootAuthService.js";
 import logger from "../logger.js";
 
 const JWT_EXPIRATION_SECONDS = 5 * 60; // 5 minutos
@@ -27,9 +35,29 @@ export function authRoot(req, res) {
     return res.status(400).json({ error: "Missing key" });
   }
 
+  // Verificar si está bloqueado globalmente
+  if (isBlocked()) {
+    const secondsRemaining = getSecondsUntilUnblock();
+    res.setHeader("Retry-After", secondsRemaining);
+    return res.status(429).json({ error: "Too many attempts. Try again later." });
+  }
+
+  // Validar clave
   if (!validateRootKey(key)) {
+    recordFailedAttempt();
+
+    // Si se acaba de bloquear, responder 429 en lugar de 401
+    if (isBlocked()) {
+      const secondsRemaining = getSecondsUntilUnblock();
+      res.setHeader("Retry-After", secondsRemaining);
+      return res.status(429).json({ error: "Too many attempts. Try again later." });
+    }
+
     return res.status(401).json({ error: "Invalid key" });
   }
+
+  // Clave correcta: resetear intentos
+  resetFailedAttempts();
 
   // Generar JWT
   const token = generateJWT();
