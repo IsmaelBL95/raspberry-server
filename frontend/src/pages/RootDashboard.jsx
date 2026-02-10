@@ -34,6 +34,9 @@ export default function RootDashboard() {
     <div style={{ padding: "20px", textAlign: "center" }}>
       <h1>📊 Root Dashboard</h1>
       <p>Panel de administración root (placeholder)</p>
+      <p style={{ fontSize: "14px", color: "#999" }}>
+        Sesión activa por 5 minutos
+      </p>
       <a href="/">Volver a Home</a>
     </div>
   );

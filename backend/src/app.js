@@ -5,6 +5,7 @@ const app = express();
 
 // Middleware básico
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Registrar rutas
 app.use(routes);
