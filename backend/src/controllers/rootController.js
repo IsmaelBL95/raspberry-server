@@ -7,71 +7,81 @@ import {
   getSecondsUntilUnblock,
   recordFailedAttempt,
   resetFailedAttempts,
+  CONFIG
 } from "../services/rootAuthService.js";
 import logger from "../logger.js";
 
-const JWT_EXPIRATION_SECONDS = 5 * 60; // 5 minutos
+const COOKIE_NAME = "root_session";
+
+function getClientIp(req) {
+  // Verificación defensiva básica del header
+  const xff = req.headers["x-forwarded-for"];
+  if (xff) {
+    const firstIp = Array.isArray(xff) ? xff[0] : xff.split(",")[0];
+    return firstIp.trim();
+  }
+  return req.ip || req.connection?.remoteAddress || "unknown";
+}
+
+function getCookieOptions(maxAge) {
+  const isProd = process.env.NODE_ENV === "production";
+  return {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: "strict",
+    path: "/",
+    maxAge: maxAge, // Segundos
+  };
+}
+
+// Handler auxiliar para respuestas de bloqueo
+function handleLockout(res, ip) {
+  const seconds = getSecondsUntilUnblock(ip);
+  res.setHeader("Retry-After", seconds);
+  return res.status(429).json({ error: "Too many attempts. Try again later." });
+}
 
 export function checkRootSession(req, res) {
   const cookies = cookie.parse(req.headers.cookie || "");
-  const token = cookies.root_session;
+  const token = cookies[COOKIE_NAME];
 
-  if (!token) {
-    return res.status(401).json({ session: "invalid" });
+  if (token && verifyJWT(token)) {
+    return res.status(200).json({ session: "valid" });
   }
 
-  const decoded = verifyJWT(token);
-  if (!decoded) {
-    return res.status(401).json({ session: "invalid" });
-  }
-
-  return res.status(200).json({ session: "valid" });
+  return res.status(401).json({ session: "invalid" });
 }
 
 export function authRoot(req, res) {
   const { key } = req.body;
+  if (!key) return res.status(400).json({ error: "Missing key" });
 
-  if (!key) {
-    return res.status(400).json({ error: "Missing key" });
+  const ip = getClientIp(req);
+
+  if (isBlocked(ip)) {
+    return handleLockout(res, ip);
   }
 
-  // Verificar si está bloqueado globalmente
-  if (isBlocked()) {
-    const secondsRemaining = getSecondsUntilUnblock();
-    res.setHeader("Retry-After", secondsRemaining);
-    return res.status(429).json({ error: "Too many attempts. Try again later." });
-  }
-
-  // Validar clave
   if (!validateRootKey(key)) {
-    recordFailedAttempt();
-
-    // Si se acaba de bloquear, responder 429 en lugar de 401
-    if (isBlocked()) {
-      const secondsRemaining = getSecondsUntilUnblock();
-      res.setHeader("Retry-After", secondsRemaining);
-      return res.status(429).json({ error: "Too many attempts. Try again later." });
+    recordFailedAttempt(ip);
+    // Verificamos si este intento provocó el bloqueo inmediato
+    if (isBlocked(ip)) {
+      return handleLockout(res, ip);
     }
-
     return res.status(401).json({ error: "Invalid key" });
   }
 
-  // Clave correcta: resetear intentos
-  resetFailedAttempts();
-
-  // Generar JWT
+  // Éxito
+  resetFailedAttempts(ip);
   const token = generateJWT();
-
-  // Configurar cookie HttpOnly
-  const cookieOptions = cookie.serialize("root_session", token, {
-    httpOnly: true,
-    secure: false, // false en desarrollo
-    sameSite: "lax",
-    path: "/",
-    maxAge: JWT_EXPIRATION_SECONDS,
-  });
-
-  res.setHeader("Set-Cookie", cookieOptions);
-  logger.success("Root authenticated successfully.");
+  
+  res.setHeader("Set-Cookie", cookie.serialize(COOKIE_NAME, token, getCookieOptions(CONFIG.JWT_EXPIRATION)));
+  
+  logger.success(`Root authenticated successfully from IP ${ip}.`);
   return res.status(200).json({ session: "valid" });
+}
+
+export function logoutRoot(req, res) {
+  res.setHeader("Set-Cookie", cookie.serialize(COOKIE_NAME, "", getCookieOptions(0)));
+  return res.status(200).json({ session: "invalid" });
 }
