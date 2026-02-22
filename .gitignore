@@ -6,6 +6,7 @@ data/
 
 # Configuración sensible
 *.env
+*.env.example
 
 # Logs
 *.log
