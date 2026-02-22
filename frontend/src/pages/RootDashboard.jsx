@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import DbConnectionPanel from "../components/DbConnectionPanel";
 
 export default function RootDashboard() {
   const [checking, setChecking] = useState(true);
@@ -62,6 +63,7 @@ export default function RootDashboard() {
       <p style={{ fontSize: "14px", color: "#999" }}>
         Sesión activa por 5 minutos (verificación cada 60s)
       </p>
+      <DbConnectionPanel />
       <a href="/">Volver a Home</a>
     </div>
   );
