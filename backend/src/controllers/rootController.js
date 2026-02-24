@@ -1,4 +1,3 @@
-import cookie from "cookie";
 import {
   validateRootKey,
   generateJWT,
@@ -13,8 +12,10 @@ import logger from "../logger.js";
 
 const COOKIE_NAME = "root_session";
 
+/**
+ * Extrae la IP del cliente considerando posibles proxies.
+ */
 function getClientIp(req) {
-  // Verificación defensiva básica del header
   const xff = req.headers["x-forwarded-for"];
   if (xff) {
     const firstIp = Array.isArray(xff) ? xff[0] : xff.split(",")[0];
@@ -23,18 +24,23 @@ function getClientIp(req) {
   return req.ip || req.connection?.remoteAddress || "unknown";
 }
 
-function getCookieOptions(maxAge) {
+/**
+ * Genera el objeto de configuración para las cookies de Express.
+ */
+function getCookieOptions(maxAgeSeconds) {
   const isProd = process.env.NODE_ENV === "production";
   return {
     httpOnly: true,
     secure: isProd,
     sameSite: "strict",
     path: "/",
-    maxAge: maxAge, // Segundos
+    maxAge: maxAgeSeconds * 1000, // Express requiere milisegundos
   };
 }
 
-// Handler auxiliar para respuestas de bloqueo
+/**
+ * Gestiona la respuesta en caso de bloqueo por fuerza bruta.
+ */
 function handleLockout(res, ip) {
   const seconds = getSecondsUntilUnblock(ip);
   res.setHeader("Retry-After", seconds);
@@ -42,8 +48,7 @@ function handleLockout(res, ip) {
 }
 
 export function checkRootSession(req, res) {
-  const cookies = cookie.parse(req.headers.cookie || "");
-  const token = cookies[COOKIE_NAME];
+  const token = req.cookies[COOKIE_NAME];
 
   if (token && verifyJWT(token)) {
     return res.status(200).json({ session: "valid" });
@@ -64,24 +69,25 @@ export function authRoot(req, res) {
 
   if (!validateRootKey(key)) {
     recordFailedAttempt(ip);
-    // Verificamos si este intento provocó el bloqueo inmediato
     if (isBlocked(ip)) {
       return handleLockout(res, ip);
     }
     return res.status(401).json({ error: "Invalid key" });
   }
 
-  // Éxito
+  // Autenticación exitosa
   resetFailedAttempts(ip);
   const token = generateJWT();
   
-  res.setHeader("Set-Cookie", cookie.serialize(COOKIE_NAME, token, getCookieOptions(CONFIG.JWT_EXPIRATION)));
+  // Uso de res.cookie de Express
+  res.cookie(COOKIE_NAME, token, getCookieOptions(CONFIG.JWT_EXPIRATION));
   
   logger.success(`Root authenticated successfully from IP ${ip}.`);
   return res.status(200).json({ session: "valid" });
 }
 
 export function logoutRoot(req, res) {
-  res.setHeader("Set-Cookie", cookie.serialize(COOKIE_NAME, "", getCookieOptions(0)));
+  // Uso de res.clearCookie de Express
+  res.clearCookie(COOKIE_NAME, getCookieOptions(0));
   return res.status(200).json({ session: "invalid" });
 }
