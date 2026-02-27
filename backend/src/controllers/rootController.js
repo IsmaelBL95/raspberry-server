@@ -1,19 +1,16 @@
 import {
-  validateRootKey,
-  generateJWT,
   verifyJWT,
-  isBlocked,
-  getSecondsUntilUnblock,
-  recordFailedAttempt,
-  resetFailedAttempts,
-  CONFIG
+  authenticateRoot,
+  CONFIG as ROOT_AUTH_CONFIG,
 } from "../services/rootAuthService.js";
-import logger from "../logger.js";
+import config from "../config/index.js";
+import logger from "../utils/logger.js";
 
 const COOKIE_NAME = "root_session";
 
 /**
- * Extrae la IP del cliente considerando posibles proxies.
+ * Devuelve la IP del cliente teniendo en cuenta la cabecera X-Forwarded-For.
+ * Se utiliza para registrar intentos y aplicar la política de bloqueos.
  */
 function getClientIp(req) {
   const xff = req.headers["x-forwarded-for"];
@@ -25,69 +22,64 @@ function getClientIp(req) {
 }
 
 /**
- * Genera el objeto de configuración para las cookies de Express.
+ * Construye las opciones para establecer una cookie de sesión. Ajusta el
+ * atributo `secure` en función del entorno y expresa la expiración en
+ * milisegundos como exige Express. Se evita exponer la cookie a JS
+ * mediante `httpOnly`.
  */
 function getCookieOptions(maxAgeSeconds) {
-  const isProd = process.env.NODE_ENV === "production";
+  const isProd = config.nodeEnv === "production";
   return {
     httpOnly: true,
     secure: isProd,
     sameSite: "strict",
     path: "/",
-    maxAge: maxAgeSeconds * 1000, // Express requiere milisegundos
+    maxAge: maxAgeSeconds * 1000,
   };
 }
 
 /**
- * Gestiona la respuesta en caso de bloqueo por fuerza bruta.
+ * Comprueba si el token de sesión raíz enviado en cookies es válido. No
+ * lanza excepciones; responde con 200 si es válido y con 401 si no lo es.
  */
-function handleLockout(res, ip) {
-  const seconds = getSecondsUntilUnblock(ip);
-  res.setHeader("Retry-After", seconds);
-  return res.status(429).json({ error: "Too many attempts. Try again later." });
-}
-
 export function checkRootSession(req, res) {
   const token = req.cookies[COOKIE_NAME];
-
   if (token && verifyJWT(token)) {
     return res.status(200).json({ session: "valid" });
   }
-
   return res.status(401).json({ session: "invalid" });
 }
 
-export function authRoot(req, res) {
+/**
+ * Autentica la clave raíz proporcionada y, en caso de éxito, genera un
+ * JWT que se envía al cliente en una cookie. Cualquier error se delega
+ * al middleware de errores mediante throw.
+ */
+export async function authRoot(req, res) {
   const { key } = req.body;
-  if (!key) return res.status(400).json({ error: "Missing key" });
-
+  if (!key) {
+    const err = new Error("Missing key");
+    err.status = 400;
+    throw err;
+  }
   const ip = getClientIp(req);
-
-  if (isBlocked(ip)) {
-    return handleLockout(res, ip);
-  }
-
-  if (!validateRootKey(key)) {
-    recordFailedAttempt(ip);
-    if (isBlocked(ip)) {
-      return handleLockout(res, ip);
-    }
-    return res.status(401).json({ error: "Invalid key" });
-  }
-
-  // Autenticación exitosa
-  resetFailedAttempts(ip);
-  const token = generateJWT();
-  
-  // Uso de res.cookie de Express
-  res.cookie(COOKIE_NAME, token, getCookieOptions(CONFIG.JWT_EXPIRATION));
-  
+  // Ejecuta autenticación. Esta función lanza para errores controlados
+  const token = await authenticateRoot(key, ip);
+  // Establece cookie con la duración configurada
+  res.cookie(
+    COOKIE_NAME,
+    token,
+    getCookieOptions(ROOT_AUTH_CONFIG.JWT_EXPIRATION)
+  );
   logger.success(`Root authenticated successfully from IP ${ip}.`);
   return res.status(200).json({ session: "valid" });
 }
 
+/**
+ * Elimina la cookie de sesión raíz. Siempre responde con 200 para no
+ * revelar información adicional.
+ */
 export function logoutRoot(req, res) {
-  // Uso de res.clearCookie de Express
   res.clearCookie(COOKIE_NAME, getCookieOptions(0));
   return res.status(200).json({ session: "invalid" });
 }

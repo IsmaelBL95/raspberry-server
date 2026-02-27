@@ -1,14 +1,22 @@
 let server = null;
 
-const startServer = (app, port) => {
+/**
+ * Arranca el servidor HTTP de Express sobre el puerto indicado. Devuelve una
+ * promesa que se resuelve cuando el servidor comienza a escuchar.
+ */
+export function startServer(app, port) {
   return new Promise((resolve) => {
     server = app.listen(port, () => {
       resolve(server);
     });
   });
-};
+}
 
-const closeServer = () => {
+/**
+ * Cierra el servidor HTTP si está activo. Devuelve una promesa que se
+ * resuelve cuando el cierre se completa.
+ */
+export function closeServer() {
   return new Promise((resolve, reject) => {
     if (server) {
       server.close((err) => {
@@ -19,6 +27,4 @@ const closeServer = () => {
       resolve();
     }
   });
-};
-
-export { startServer, closeServer };
+}
