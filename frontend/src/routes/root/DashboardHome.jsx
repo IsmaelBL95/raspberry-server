@@ -1,3 +1,7 @@
+/**
+ * Dashboard home view.  Displays a welcome message and describes
+ * the purpose of the dashboard.
+ */
 export default function DashboardHome() {
   return (
     <>

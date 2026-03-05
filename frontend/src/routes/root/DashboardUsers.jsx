@@ -1,3 +1,7 @@
+/**
+ * Dashboard users management view.  Placeholder for user management
+ * functionality.
+ */
 export default function DashboardUsers() {
   return (
     <>

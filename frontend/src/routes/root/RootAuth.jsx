@@ -1,18 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import TerminalScreen from "../../components/TerminalScreen.jsx";
 
+/**
+ * Authentication page for the root dashboard.  It checks for an
+ * existing session on mount and displays a password input for
+ * entering a 16‑character key.  The key is submitted
+ * automatically once it reaches 16 characters.  The form provides
+ * feedback based on the response status codes.
+ */
 export default function RootAuth() {
   const navigate = useNavigate();
 
   const [checkingSession, setCheckingSession] = useState(true);
-
   const [keyInput, setKeyInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState(null);
   const [isBlocked, setIsBlocked] = useState(false);
-
   const hasSubmittedRef = useRef(false);
 
+  // Check if there is an existing valid session on mount.
   useEffect(() => {
     const controller = new AbortController();
 
@@ -22,38 +29,35 @@ export default function RootAuth() {
           credentials: "include",
           signal: controller.signal,
         });
-
         if (res.status === 200) {
           navigate("/root/dashboard", { replace: true });
           return;
         }
-
         setCheckingSession(false);
       } catch (err) {
         if (err?.name === "AbortError") return;
         setCheckingSession(false);
       }
     };
-
     checkSession();
     return () => controller.abort();
   }, [navigate]);
 
+  // Auto‑submit the key once it reaches 16 characters.
   useEffect(() => {
     if (keyInput.length !== 16) {
       hasSubmittedRef.current = false;
       return;
     }
     if (hasSubmittedRef.current) return;
-
     hasSubmittedRef.current = true;
     submitKey();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [keyInput]);
 
+  // Submit the authentication key to the backend.
   const submitKey = async () => {
     if (loading) return;
-
     setLoading(true);
     setFeedback(null);
 
@@ -72,10 +76,7 @@ export default function RootAuth() {
           navigate("/root/dashboard", { replace: true });
         }, 500);
       } else if (res.status === 429) {
-        setFeedback({
-          type: "error",
-          message: "AUTH_FAILED: RATE_LIMIT_EXCEEDED. SYS_LOCKED.",
-        });
+        setFeedback({ type: "error", message: "AUTH_FAILED: RATE_LIMIT_EXCEEDED. SYS_LOCKED." });
         setIsBlocked(true);
         setKeyInput("");
       } else if (res.status === 401) {
@@ -93,23 +94,9 @@ export default function RootAuth() {
     }
   };
 
+  // Display a terminal screen while checking the session.
   if (checkingSession) {
-    return (
-      <div
-        style={{
-          backgroundColor: "#000000",
-          color: "#00FF00",
-          minHeight: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          fontFamily: "'Courier New', Consolas, monospace",
-          textTransform: "uppercase",
-        }}
-      >
-        [SYSTEM]: INITIALIZING_SESSION_CHECK...
-      </div>
-    );
+    return <TerminalScreen message="[SYSTEM]: INITIALIZING_SESSION_CHECK..." />;
   }
 
   return (
@@ -138,7 +125,6 @@ export default function RootAuth() {
         >
           root_system: authenticate
         </h1>
-
         <input
           type="password"
           value={keyInput}
@@ -160,7 +146,6 @@ export default function RootAuth() {
             letterSpacing: "2px",
           }}
         />
-
         <div style={{ minHeight: "28px", marginTop: "12px" }}>
           {feedback && (
             <p
@@ -174,7 +159,6 @@ export default function RootAuth() {
             </p>
           )}
         </div>
-
         <div
           style={{
             marginTop: "10px",

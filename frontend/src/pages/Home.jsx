@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
 
+/**
+ * Home page of the application.  It performs a simple health check
+ * against the backend API and displays the status.  Links are
+ * provided to the root authentication and dashboard.
+ */
 export default function Home() {
   const [backendStatus, setBackendStatus] = useState(null);
   const [loading, setLoading] = useState(true);
