@@ -4,19 +4,15 @@ import { useNavigate } from "react-router-dom";
 export default function RootAuth() {
   const navigate = useNavigate();
 
-  // 1) Gate: primero comprobamos sesión
   const [checkingSession, setCheckingSession] = useState(true);
 
-  // 2) UI de auth
   const [keyInput, setKeyInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState(null);
   const [isBlocked, setIsBlocked] = useState(false);
 
-  // Evita múltiples submits por StrictMode o re-renders
   const hasSubmittedRef = useRef(false);
 
-  // Verificar sesión: si es válida -> dashboard; si no -> mostrar UI
   useEffect(() => {
     const controller = new AbortController();
 
@@ -34,7 +30,6 @@ export default function RootAuth() {
 
         setCheckingSession(false);
       } catch (err) {
-        // En desarrollo (StrictMode) un AbortError es normal durante el remount
         if (err?.name === "AbortError") return;
         setCheckingSession(false);
       }
@@ -44,10 +39,9 @@ export default function RootAuth() {
     return () => controller.abort();
   }, [navigate]);
 
-  // Auto-submit al llegar EXACTAMENTE a 16 caracteres (una vez por intento)
   useEffect(() => {
     if (keyInput.length !== 16) {
-      hasSubmittedRef.current = false; // permite un nuevo intento cuando el input cambia
+      hasSubmittedRef.current = false;
       return;
     }
     if (hasSubmittedRef.current) return;
@@ -72,30 +66,27 @@ export default function RootAuth() {
       });
 
       if (res.status === 200) {
-        setFeedback({ type: "success", message: "✅ Autenticación correcta" });
+        setFeedback({ type: "success", message: "AUTH_SUCCESS: ACCESS_GRANTED" });
         setIsBlocked(false);
         setTimeout(() => {
           navigate("/root/dashboard", { replace: true });
         }, 500);
       } else if (res.status === 429) {
-        // Rate limit: bloqueado temporalmente
         setFeedback({
           type: "error",
-          message: "❌ Demasiados intentos. Inténtalo de nuevo más tarde.",
+          message: "AUTH_FAILED: RATE_LIMIT_EXCEEDED. SYS_LOCKED.",
         });
         setIsBlocked(true);
         setKeyInput("");
       } else if (res.status === 401) {
-        // Clave incorrecta
-        setFeedback({ type: "error", message: "❌ Clave incorrecta" });
+        setFeedback({ type: "error", message: "AUTH_FAILED: INVALID_KEY" });
         setKeyInput("");
       } else {
-        // Otros errores
-        setFeedback({ type: "error", message: "❌ Error de conexión" });
+        setFeedback({ type: "error", message: "AUTH_FAILED: UNKNOWN_ERR" });
         setKeyInput("");
       }
     } catch {
-      setFeedback({ type: "error", message: "❌ Error de conexión" });
+      setFeedback({ type: "error", message: "AUTH_FAILED: CONNECTION_LOST" });
       setKeyInput("");
     } finally {
       setLoading(false);
@@ -104,25 +95,49 @@ export default function RootAuth() {
 
   if (checkingSession) {
     return (
-      <div style={{ padding: "20px", textAlign: "center" }}>
-        Checking session...
+      <div
+        style={{
+          backgroundColor: "#000000",
+          color: "#00FF00",
+          minHeight: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          fontFamily: "'Courier New', Consolas, monospace",
+          textTransform: "uppercase",
+        }}
+      >
+        [SYSTEM]: INITIALIZING_SESSION_CHECK...
       </div>
     );
   }
 
-  // UI mínima y didáctica (según requisitos)
   return (
     <div
       style={{
+        backgroundColor: "#000000",
         minHeight: "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         padding: "20px",
+        fontFamily: "'Courier New', Consolas, monospace",
+        color: "#00FF00",
+        textTransform: "uppercase",
       }}
     >
-      <div style={{ width: "320px", textAlign: "center" }}>
-        <h1>Root Auth</h1>
+      <div style={{ width: "320px" }}>
+        <h1
+          style={{
+            fontSize: "14px",
+            fontWeight: "normal",
+            marginBottom: "20px",
+            borderBottom: "1px solid #00FF00",
+            paddingBottom: "5px",
+          }}
+        >
+          root_system: authenticate
+        </h1>
 
         <input
           type="password"
@@ -130,8 +145,20 @@ export default function RootAuth() {
           onChange={(e) => setKeyInput(e.target.value)}
           disabled={loading || isBlocked}
           maxLength={16}
-          placeholder="Introduce la clave (16 caracteres)"
-          style={{ width: "100%", padding: "10px", fontSize: "16px" }}
+          placeholder=""
+          style={{
+            width: "100%",
+            padding: "10px",
+            fontSize: "16px",
+            backgroundColor: "#000000",
+            color: "#00FF00",
+            border: "1px solid #00FF00",
+            borderRadius: "0px",
+            outline: "none",
+            boxSizing: "border-box",
+            fontFamily: "inherit",
+            letterSpacing: "2px",
+          }}
         />
 
         <div style={{ minHeight: "28px", marginTop: "12px" }}>
@@ -139,7 +166,8 @@ export default function RootAuth() {
             <p
               style={{
                 margin: 0,
-                color: feedback.type === "success" ? "green" : "red",
+                fontSize: "12px",
+                color: feedback.type === "success" ? "#00FF00" : "#FF0000",
               }}
             >
               {feedback.message}
@@ -147,8 +175,14 @@ export default function RootAuth() {
           )}
         </div>
 
-        <div style={{ marginTop: "10px", fontSize: "12px", opacity: 0.7 }}>
-          {!isBlocked ? `${keyInput.length}/16` : "Bloqueado temporalmente"}
+        <div
+          style={{
+            marginTop: "10px",
+            fontSize: "10px",
+            color: "#00FF00",
+          }}
+        >
+          {!isBlocked ? `BUFFER: [${keyInput.length}/16]` : "STATUS: LOCKDOWN"}
         </div>
       </div>
     </div>
