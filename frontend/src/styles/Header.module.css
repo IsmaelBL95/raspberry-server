@@ -1,0 +1,30 @@
+header {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.logo {
+    display: flex;
+}
+
+.logo img {
+    height: 33px;
+}
+
+button {
+    padding: 5px 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: var(--main);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    
+}
+button:hover {
+    background-color: var(--light);
+}

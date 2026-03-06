@@ -1,5 +1,15 @@
-body {
+:root {
+  --light: #DF7BB4;
+  --main: #C43285;
+  --dark: #9C0059;
+  --ultra-dark: #3d0023;
+}
+
+* {
     margin: 0;
+    padding: 0;
+}
+
+body {
     font-family: Arial, sans-serif;
-    background-color: #d1f4f8;
-    }  
+}

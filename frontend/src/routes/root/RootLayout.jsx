@@ -33,7 +33,6 @@ export default function RootLayout() {
         display: "flex",
         flexDirection: "column",
         fontFamily: "'Courier New', Consolas, monospace",
-        textTransform: "uppercase",
       }}
     >
       <HeaderStatus mongoStatus={mongoStatus} />

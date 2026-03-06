@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Header from "../components/Header.jsx";
 
 /**
  * Home page of the application.  It performs a simple health check
@@ -31,7 +32,8 @@ export default function Home() {
   }, []);
 
   return (
-    <div style={{ padding: "20px", textAlign: "center" }}>
+    <div>
+      <Header />
       <h1>🏠 Home</h1>
       <p>Bienvenido a Rasp Server</p>
 
