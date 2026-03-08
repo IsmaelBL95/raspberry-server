@@ -1,8 +1,17 @@
 :root {
-  --light: #DF7BB4;
-  --main: #C43285;
-  --dark: #9C0059;
-  --ultra-dark: #3d0023;
+    /* Primary Colors */
+    --light-primary-color: #E37EB7;
+    --midlight-primary-color: #D3539B;
+    --primary-color: #C43285;
+    --middark-primary-color: #B40F6C;
+    --dark-primary-color: #B40F6C;
+
+    /* Complement Colors */
+    --light-complement-color: #FFFF8E;
+    --midlight-complement-color: #FFFF64;
+    --complement-color: #F4F43E;
+    --middark-complement-color: #E0E012;
+    --dark-complement-color: #ADAD07;
 }
 
 * {

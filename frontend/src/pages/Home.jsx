@@ -30,28 +30,33 @@ export default function Home() {
 
     checkBackend();
   }, []);
-
+  /*
+    return (
+      <div>
+        <Header />
+        <h1>🏠 Home</h1>
+        <p>Bienvenido a Rasp Server</p>
+  
+        <div style={{ marginTop: "20px" }}>
+          <h2>Estado del Backend</h2>
+          {loading && <p>Verificando backend...</p>}
+          {error && <p style={{ color: "red" }}>{error}</p>}
+          {backendStatus && (
+            <p style={{ color: "green" }}>✅ Backend: {backendStatus}</p>
+          )}
+        </div>
+  
+        <div style={{ marginTop: "30px" }}>
+          <a href="/root/auth" style={{ marginRight: "10px" }}>
+            Root Auth
+          </a>
+          <a href="/root/dashboard">Root Dashboard</a>
+        </div>
+      </div>
+    );*/
   return (
-    <div>
+    <>
       <Header />
-      <h1>🏠 Home</h1>
-      <p>Bienvenido a Rasp Server</p>
-
-      <div style={{ marginTop: "20px" }}>
-        <h2>Estado del Backend</h2>
-        {loading && <p>Verificando backend...</p>}
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {backendStatus && (
-          <p style={{ color: "green" }}>✅ Backend: {backendStatus}</p>
-        )}
-      </div>
-
-      <div style={{ marginTop: "30px" }}>
-        <a href="/root/auth" style={{ marginRight: "10px" }}>
-          Root Auth
-        </a>
-        <a href="/root/dashboard">Root Dashboard</a>
-      </div>
-    </div>
+    </>
   );
 }
