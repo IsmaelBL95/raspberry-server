@@ -1,11 +1,12 @@
 # Dependencias
-backend/node_modules/
+node_modules/
 
 # Datos persistentes de MongoDB
 data/
 
 # Configuración sensible
 *.env
+*.env.example
 
 # Logs
 *.log
@@ -19,3 +20,8 @@ Thumbs.db
 
 # Archivo de documentación que no quieres versionar
 /Estructura de carpetas y archivos.txt
+
+SPEC.md
+
+backend (antiguo)/
+frontend (antiguo)/

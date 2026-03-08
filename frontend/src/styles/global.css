@@ -1,0 +1,24 @@
+:root {
+    /* Primary Colors */
+    --light-primary-color: #E37EB7;
+    --midlight-primary-color: #D3539B;
+    --primary-color: #C43285;
+    --middark-primary-color: #B40F6C;
+    --dark-primary-color: #B40F6C;
+
+    /* Complement Colors */
+    --light-complement-color: #FFFF8E;
+    --midlight-complement-color: #FFFF64;
+    --complement-color: #F4F43E;
+    --middark-complement-color: #E0E012;
+    --dark-complement-color: #ADAD07;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
