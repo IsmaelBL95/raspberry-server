@@ -1,0 +1,83 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 0;
+}
+
+.loginForm,
+.registerForm {
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 288px;
+}
+
+.title {
+  color: var(--primary-color);
+  text-align: center;
+  margin: 0;
+}
+
+.input {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.loginButton,
+.registerButton {
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.loginButton {
+  background: var(--primary-color);
+  color: white;
+}
+
+.loginButton:hover {
+  background: var(--middark-primary-color);
+}
+
+.registerButton {
+  background: var(--complement-color);
+  color: #333;
+}
+
+.registerButton:hover {
+  background: var(--middark-complement-color);
+}
+
+.backLink {
+  margin-top: 1rem;
+  color: var(--primary-color);
+  text-decoration: none;
+  text-align: right;
+  font-weight: bold;
+}
+
+.backLink:hover {
+  color: var(--middark-primary-color)
+}
+
+@media (max-width: 600px) {
+  .loginForm,
+  .registerForm {
+    width: 75%;
+  }
+}

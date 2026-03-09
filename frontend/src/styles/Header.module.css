@@ -1,9 +1,13 @@
 header {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.headerContent {
+    margin:  0 auto;
+    max-width: 720px;
     display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 10px 20px;
+    justify-content: space-between;
+    padding: 15px;
 }
 
 .logo {
@@ -16,21 +20,6 @@ header {
 }
 .title {
     translate: 0 5px;
-}
-
-button {
-    padding: 8px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 5px;
-}
-
-button:hover {
-    background-color: var(--middark-primary-color);
 }
 
 .avatar {

@@ -22,3 +22,24 @@
 body {
     font-family: Arial, sans-serif;
 }
+
+main {
+    padding: 10px;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+button {
+    padding: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 10px;
+}
+
+button:hover {
+    background-color: var(--middark-primary-color);
+}

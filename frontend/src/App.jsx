@@ -3,10 +3,15 @@ import { Suspense, lazy } from "react";
 
 // Lazy loaded routes and pages.  Lazy loading defers loading of the
 // modules until they are requested, reducing initial bundle size.
-const Home = lazy(() => import("./pages/Home.jsx"));
+const MainLayout = lazy(() => import("./pages/MainLayout.jsx"));
 const RootAuth = lazy(() => import("./routes/root/RootAuth.jsx"));
 const RootLayout = lazy(() => import("./routes/root/RootLayout.jsx"));
 const NotFound = lazy(() => import("./pages/NotFound.jsx"));
+
+const Login = lazy(() => import("./pages/Login.jsx"));
+
+// Nested routes inside the MainLayout.  These are scoped to children of MainLayout.
+const Main = lazy(() => import("./routes/Main.jsx"));
 
 // Nested routes inside the root dashboard.  These are scoped to
 // children of RootLayout.
@@ -21,7 +26,10 @@ function App() {
     <BrowserRouter>
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<MainLayout />}>
+            <Route index element={<Main />} />
+          </Route>
+          <Route path="/login" element={<Login />} />
           <Route path="/root/auth" element={<RootAuth />} />
           <Route path="/root/dashboard" element={<RootLayout />}>
             <Route index element={<DashboardHome />} />
