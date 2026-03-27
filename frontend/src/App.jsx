@@ -1,3 +1,4 @@
+// src/App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Suspense, lazy } from "react";
 
@@ -9,6 +10,7 @@ const RootLayout = lazy(() => import("./routes/root/RootLayout.jsx"));
 const NotFound = lazy(() => import("./pages/NotFound.jsx"));
 
 const Login = lazy(() => import("./pages/Login.jsx"));
+const Register = lazy(() => import("./pages/Register.jsx"));
 
 // Nested routes inside the MainLayout.  These are scoped to children of MainLayout.
 const Main = lazy(() => import("./routes/Main.jsx"));
@@ -30,6 +32,7 @@ function App() {
             <Route index element={<Main />} />
           </Route>
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/root/auth" element={<RootAuth />} />
           <Route path="/root/dashboard" element={<RootLayout />}>
             <Route index element={<DashboardHome />} />

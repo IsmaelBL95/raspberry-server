@@ -1,7 +1,10 @@
-import { NavLink } from 'react-router-dom';
-import styles from '../styles/Login.module.css';
+// src/pages/Login.jsx
+import { NavLink, useNavigate } from "react-router-dom";
+import styles from "../styles/Login.module.css";
 
 const Login = () => {
+  const navigate = useNavigate();
+
   return (
     <main className={styles.container}>
       <form className={styles.loginForm}>
@@ -15,10 +18,15 @@ const Login = () => {
 
       <form className={styles.registerForm}>
         <h3 className={styles.title}>¿Aún no tienes cuenta?</h3>
-        <button className={styles.registerButton} type="button">
+        <button
+          className={styles.registerButton}
+          type="button"
+          onClick={() => navigate("/register")}
+        >
           Registrarse
         </button>
       </form>
+
       <NavLink to="/" className={styles.backLink}>
         Volver al inicio
       </NavLink>

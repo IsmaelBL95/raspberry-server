@@ -1,3 +1,4 @@
+/* src/styles/Login.module.css */
 .container {
   min-height: 100vh;
   display: flex;
@@ -9,7 +10,8 @@
 }
 
 .loginForm,
-.registerForm {
+.registerForm,
+.registerPageForm {
   background: white;
   padding: 1rem;
   border-radius: 10px;
@@ -18,6 +20,10 @@
   flex-direction: column;
   gap: 1rem;
   width: 288px;
+}
+
+.registerPageForm {
+  width: 340px;
 }
 
 .title {
@@ -38,11 +44,17 @@
   border-color: var(--primary-color);
 }
 
+.input:disabled {
+  background: #f5f5f5;
+  cursor: not-allowed;
+}
+
 .loginButton,
 .registerButton {
   border: none;
   border-radius: 10px;
   cursor: pointer;
+  padding: 10px;
 }
 
 .loginButton {
@@ -52,6 +64,11 @@
 
 .loginButton:hover {
   background: var(--middark-primary-color);
+}
+
+.loginButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .registerButton {
@@ -72,12 +89,32 @@
 }
 
 .backLink:hover {
-  color: var(--middark-primary-color)
+  color: var(--middark-primary-color);
+}
+
+.errorMessage,
+.successMessage {
+  margin: 0;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.errorMessage {
+  background: #fdeaea;
+  color: #b42318;
+}
+
+.successMessage {
+  background: #ecfdf3;
+  color: #067647;
 }
 
 @media (max-width: 600px) {
   .loginForm,
-  .registerForm {
+  .registerForm,
+  .registerPageForm {
     width: 75%;
   }
 }

@@ -1,5 +1,7 @@
+// src/routes/index.js
 import express from "express";
 import rootRoutes from "./rootRoutes.js";
+import identityRoutes from "./identityRoutes.js";
 import { isMongoReady } from "../db/mongoManager.js";
 
 const router = express.Router();
@@ -19,5 +21,8 @@ router.get("/ready", (_req, res) => {
 
 // Prefijo para rutas de autenticación raíz
 router.use("/root", rootRoutes);
+
+// Prefijo para rutas de identidades
+router.use("/identities", identityRoutes);
 
 export default router;
