@@ -25,3 +25,31 @@ export async function registerIdentity(data) {
 
   return sanitizeIdentity(identity);
 }
+
+export async function authenticateIdentity(data) {
+  const { nickname, password } = data;
+
+  const identity = await Identity.findByNickname(nickname);
+
+  if (!identity) {
+    return null;
+  }
+
+  const isValidPassword = await identity.comparePassword(password);
+
+  if (!isValidPassword) {
+    return null;
+  }
+
+  return sanitizeIdentity(identity);
+}
+
+export async function getIdentityPublicById(identityId) {
+  const identity = await Identity.findById(identityId);
+
+  if (!identity) {
+    return null;
+  }
+
+  return sanitizeIdentity(identity);
+}

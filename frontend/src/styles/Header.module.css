@@ -1,32 +1,76 @@
-header {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+/* src/styles/Header.module.css */
+.header {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .headerContent {
-    margin:  0 auto;
-    max-width: 720px;
-    display: flex;
-    justify-content: space-between;
-    padding: 15px;
+  margin: 0 auto;
+  max-width: 720px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  gap: 12px;
 }
 
 .logo {
-    display: flex;
-    gap: 10px;
+  display: flex;
+  gap: 10px;
 }
 
 .logo img {
-    height: 32px;
+  height: 32px;
 }
+
 .title {
-    translate: 0 5px;
+  translate: 0 5px;
+}
+
+.sessionZone {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sessionText {
+  font-size: 14px;
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.loginBtn,
+.logoutBtn {
+  padding: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+}
+
+.loginBtn {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.loginBtn:hover {
+  background-color: var(--middark-primary-color);
+}
+
+.logoutBtn {
+  background-color: var(--complement-color);
+  color: #333;
+}
+
+.logoutBtn:hover {
+  background-color: var(--middark-complement-color);
 }
 
 .avatar {
   width: 32px;
   height: 32px;
-  border-radius: 50%; /* Esto lo hace circular */
-  overflow: hidden;   /* Corta la imagen para que no se salga del círculo */
+  border-radius: 50%;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,15 +80,24 @@ header {
 .avatar img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Evita que la foto se deforme */
+  object-fit: cover;
 }
 
 @media (max-width: 600px) {
-    header {
-        justify-content: space-between;
-    }
+  .headerContent {
+    justify-content: space-between;
+  }
 
-    .title {
-        display: none;
-    }
+  .title {
+    display: none;
+  }
+
+  .sessionZone {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .sessionText {
+    font-size: 12px;
+  }
 }

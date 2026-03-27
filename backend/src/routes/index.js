@@ -16,6 +16,7 @@ router.get("/ready", (_req, res) => {
   if (!isMongoReady()) {
     return res.status(503).json({ status: "degraded", mongo: "down" });
   }
+
   return res.status(200).json({ status: "ok", mongo: "up" });
 });
 
