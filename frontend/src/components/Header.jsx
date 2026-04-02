@@ -1,6 +1,20 @@
 // src/components/Header.jsx
-import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import styles from "../styles/Header.module.css";
+
+function getInitials(identity) {
+  if (!identity) return "";
+
+  const first = identity.firstName?.[0] || "";
+  const last = identity.lastName?.[0] || "";
+
+  if (first || last) {
+    return (first + last).toUpperCase();
+  }
+
+  return identity.nickname?.[0]?.toUpperCase() || "";
+}
 
 export default function Header({
   identity,
@@ -8,6 +22,21 @@ export default function Header({
   isAuthenticated,
   onLogout,
 }) {
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const toggleMenu = () => setOpen((prev) => !prev);
+
+  const handleProfile = () => {
+    setOpen(false);
+    navigate("/profile");
+  };
+
+  const handleLogout = async () => {
+    setOpen(false);
+    await onLogout();
+  };
+
   return (
     <header className={styles.header}>
       <div className={styles.headerContent}>
@@ -22,18 +51,37 @@ export default function Header({
           ) : null}
 
           {!loading && isAuthenticated ? (
-            <>
-              <span className={styles.sessionText}>
-                Hola, {identity.firstName || identity.nickname}
-              </span>
+            <div className={styles.avatarWrapper}>
               <button
-                className={styles.logoutBtn}
                 type="button"
-                onClick={onLogout}
+                className={styles.avatarButton}
+                onClick={toggleMenu}
               >
-                Cerrar sesión
+                {getInitials(identity)}
               </button>
-            </>
+
+              {open ? (
+                <div className={styles.dropdown}>
+                  <div className={styles.dropdownHeader}>
+                    {identity.firstName || identity.nickname}
+                  </div>
+
+                  <button
+                    className={styles.dropdownItem}
+                    onClick={handleProfile}
+                  >
+                    Mi perfil
+                  </button>
+
+                  <button
+                    className={styles.dropdownItem}
+                    onClick={handleLogout}
+                  >
+                    Cerrar sesión
+                  </button>
+                </div>
+              ) : null}
+            </div>
           ) : null}
 
           {!loading && !isAuthenticated ? (

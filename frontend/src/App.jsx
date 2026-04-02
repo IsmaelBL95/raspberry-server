@@ -11,6 +11,7 @@ const NotFound = lazy(() => import("./pages/NotFound.jsx"));
 
 const Login = lazy(() => import("./pages/Login.jsx"));
 const Register = lazy(() => import("./pages/Register.jsx"));
+const Profile = lazy(() => import("./pages/Profile.jsx"));
 
 // Nested routes inside the MainLayout.  These are scoped to children of MainLayout.
 const Main = lazy(() => import("./routes/Main.jsx"));
@@ -30,6 +31,7 @@ function App() {
         <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Main />} />
+            <Route path="profile" element={<Profile />} />
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

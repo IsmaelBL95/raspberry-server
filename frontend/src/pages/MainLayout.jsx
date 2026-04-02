@@ -5,7 +5,8 @@ import { useIdentitySession } from "../hooks/useIdentitySession.js";
 
 export default function Home() {
   const navigate = useNavigate();
-  const { identity, loading, isAuthenticated, logout } = useIdentitySession();
+  const session = useIdentitySession();
+  const { identity, loading, isAuthenticated, logout } = session;
 
   const handleLogout = async () => {
     await logout();
@@ -20,7 +21,7 @@ export default function Home() {
         isAuthenticated={isAuthenticated}
         onLogout={handleLogout}
       />
-      <Outlet />
+      <Outlet context={session} />
     </>
   );
 }

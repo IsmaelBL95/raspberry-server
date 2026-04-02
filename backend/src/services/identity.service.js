@@ -3,9 +3,7 @@ import Identity from "../models/identity.model.js";
 
 function sanitizeIdentity(identity) {
   const identityObject = identity.toObject();
-
   delete identityObject.passwordHash;
-
   return identityObject;
 }
 
@@ -30,26 +28,38 @@ export async function authenticateIdentity(data) {
   const { nickname, password } = data;
 
   const identity = await Identity.findByNickname(nickname);
-
-  if (!identity) {
-    return null;
-  }
+  if (!identity) return null;
 
   const isValidPassword = await identity.comparePassword(password);
-
-  if (!isValidPassword) {
-    return null;
-  }
+  if (!isValidPassword) return null;
 
   return sanitizeIdentity(identity);
 }
 
 export async function getIdentityPublicById(identityId) {
   const identity = await Identity.findById(identityId);
+  if (!identity) return null;
 
-  if (!identity) {
-    return null;
+  return sanitizeIdentity(identity);
+}
+
+export async function updateIdentityById(identityId, updates) {
+  const identity = await Identity.findById(identityId);
+  if (!identity) return null;
+
+  if (updates.firstName !== undefined) {
+    identity.firstName = updates.firstName.trim();
   }
+
+  if (updates.lastName !== undefined) {
+    identity.lastName = updates.lastName.trim();
+  }
+
+  if (updates.birthDate !== undefined) {
+    identity.birthDate = updates.birthDate;
+  }
+
+  await identity.save();
 
   return sanitizeIdentity(identity);
 }
