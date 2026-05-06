@@ -1,3 +1,5 @@
+// src/models/identity.model.js
+
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 
@@ -11,51 +13,44 @@ const identitySchema = new Schema(
       trim: true,
       minlength: 3,
       maxlength: 30,
-      match: /^[a-zA-Z0-9]+$/
+      match: /^[a-zA-Z0-9]+$/ // Solo letras y números
     },
+
+    // Versión normalizada para búsquedas insensibles a mayúsculas/minúsculas
     nicknameCanonical: {
       type: String,
       required: true,
       unique: true
     },
+
     passwordHash: {
       type: String,
       required: true,
-      select: false
+      select: false // Nunca exponer por defecto
     },
-    lastLoginAt: {
-      type: Date,
-      default: null
+
+    status: {
+      type: String,
+      enum: ['active', 'suspended', 'deleted'],
+      default: 'active'
     },
-    failedLoginAttempts: {
-      type: Number,
-      default: 0,
-      min: 0
-    },
-    lockedUntil: {
-      type: Date,
-      default: null
-    },
+
+    // Perfil opcional (NO requerido en registro)
     firstName: {
       type: String,
-      required: true,
       trim: true,
-      maxlength: 100
+      default: null
     },
+
     lastName: {
       type: String,
-      required: true,
       trim: true,
-      maxlength: 150
+      default: null
     },
+
     birthDate: {
       type: Date,
       default: null
-    },
-    status: {
-      type: String,
-      enum: ['active', 'suspended', 'deleted', 'pending'],
-      default: 'pending'
     }
   },
   {
@@ -63,41 +58,45 @@ const identitySchema = new Schema(
   }
 );
 
-// Middleware
+/**
+ * Normaliza nickname antes de validar.
+ * Evita duplicados por diferencias de mayúsculas.
+ */
 identitySchema.pre('validate', function (next) {
   if (this.nickname) {
+    this.nickname = this.nickname.trim();
     this.nicknameCanonical = this.nickname.toLowerCase();
   }
+
   next();
 });
 
-// Métodos de instancia
+/**
+ * Hashea contraseña.
+ */
 identitySchema.methods.setPassword = async function (plainPassword) {
   const saltRounds = 12;
   this.passwordHash = await bcrypt.hash(plainPassword, saltRounds);
 };
 
+/**
+ * Compara contraseña.
+ */
 identitySchema.methods.comparePassword = async function (plainPassword) {
   return bcrypt.compare(plainPassword, this.passwordHash);
 };
 
-identitySchema.methods.isLocked = function () {
-  return Boolean(this.lockedUntil && this.lockedUntil > new Date());
-};
-
-// Métodos estáticos
+/**
+ * Buscar usuario por nickname.
+ * Incluye passwordHash porque está oculto por defecto.
+ */
 identitySchema.statics.findByNickname = function (nickname) {
-  if (typeof nickname !== 'string') {
-    return null;
-  }
+  if (!nickname) return null;
 
   return this.findOne({
-    nicknameCanonical: nickname.toLowerCase()
+    nicknameCanonical: nickname.trim().toLowerCase()
   }).select('+passwordHash');
 };
-
-// Índices
-identitySchema.index({ createdAt: -1 });
 
 const Identity = model('Identity', identitySchema);
 

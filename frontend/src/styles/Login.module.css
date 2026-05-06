@@ -1,0 +1,103 @@
+/* Contenedor principal */
+.loginPage {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(160deg, var(--light-complement-color), var(--primary-color));
+  font-family: sans-serif;
+}
+
+/* Caja del formulario */
+.formCard {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column; /* Alinea los hijos uno debajo del otro */
+  gap: 1rem;
+}
+
+.formCard h1, h2, h3{
+  color: var(--primary-color);
+  text-align: center;
+}
+
+/* Contenedor del input e icono */
+.inputWrapper {
+  color: var(--primary-color);
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputField {
+  background-color: #f0f0f0;
+  width: 100%;
+  height: 32px;
+  text-align: center;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.inputField:hover {
+  background-color: #e0e0e0;
+}
+
+.inputField:focus {
+  outline: var(--primary-color) solid 2px;
+  background-color: white;
+}
+
+.icon {
+  position: absolute;
+  left: 12px;
+  color: gray;
+  pointer-events: none;
+}
+
+.link {
+  color: var(--primary-color);
+  text-decoration: none;
+  text-align: right;
+}
+
+.link:hover {
+  color: var(--light-primary-color);
+  text-decoration: underline;
+}
+
+/* ... (tus estilos anteriores se mantienen) ... */
+
+/* Estilo para el input cuando hay error */
+.inputError {
+  outline: #ff4d4d solid 2px !important;
+  background-color: #fff5f5 !important;
+}
+
+/* Contenedor de icono cuando hay error (opcional por si quieres cambiar el color del icono) */
+.errorContainer .icon {
+  color: #ff4d4d;
+}
+
+/* Mensaje de error debajo del input */
+.errorText {
+  color: #ff4d4d;
+  font-size: 0.75rem;
+  margin-top: 4px;
+  display: block;
+  text-align: left;
+  padding-left: 5px;
+}
+
+@media (max-width: 600px) {
+  .formCard {
+    max-width: none;
+    width: 90%;
+  }
+}

@@ -1,0 +1,60 @@
+.container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.trigger {
+  background: none;
+  cursor: pointer;
+  border: none;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 10px); /* Espaciado consistente respecto al trigger */
+  right: 0;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+}
+
+.menuItem {
+  padding: 10px 16px;
+  border-radius: 8px; /* Ligeramente menor que el padre para efecto visual óptimo */
+  cursor: pointer;
+  font-weight: bold;
+  color: var(--primary-color);
+  white-space: nowrap; /* Evita que el texto salte de línea */
+}
+
+.menuItem:hover {
+  background-color: #f0f0f0;
+}
+
+/* Variante principal/destacada */
+.primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.primary:hover {
+  background-color: var(--midlight-primary-color);
+}
+
+/* Responsivo: pantalla < 600px */
+@media (max-width: 600px) {
+  .menu {
+    position: fixed;
+    top: 50px; /* Altura de tu header */
+    width: 100%;
+  }
+
+  .menuItem {
+    padding: 18px; /* Área de toque amplia */
+    text-align: center;
+  }
+}
