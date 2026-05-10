@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logoimage from '../assets/PinkHeart.svg';
 import logotext from '../assets/PinkTitle.svg';
 import { Button } from '../elements/index';
@@ -17,6 +17,7 @@ const Logo = () => {
 };
 
 const Header = () => {
+  const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, logout } = useAuth();
 
   const displayName = user?.firstName && user?.lastName
@@ -26,7 +27,12 @@ const Header = () => {
   const navItems = [
     {
       label: 'Mi Perfil',
-      onClick: () => console.log('Navegando al perfil...'),
+      onClick: () => {
+        const profileSlug = user?.nicknameCanonical || user?.nickname;
+        if (profileSlug) {
+          navigate(`/profile/${profileSlug}`);
+        }
+      },
     },
     {
       label: 'Ajustes',
@@ -41,12 +47,13 @@ const Header = () => {
 
   return (
     <header className={styles.header}>
-      <Logo />
+      <Link to="/" style={{ textDecoration: 'none' }}>
+        <Logo />
+      </Link>
       {isLoading ? null : isAuthenticated ? (
         <DropdownMenu
           user={{ name: displayName, image: null }}
           menuItems={navItems}
-          avatarSize="medium"
         />
       ) : (
         <Link to="/login" style={{ textDecoration: 'none' }}>

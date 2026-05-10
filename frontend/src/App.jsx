@@ -27,7 +27,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Suspense fallback={<Loading />}><Home /></Suspense> },
       { path: "users", element: <Suspense fallback={<Loading />}><UsersList /></Suspense> },
-      { path: "profile/:id", element: <Suspense fallback={<Loading />}><UserProfile /></Suspense> },
+      { path: "profile/:nickname", element: <Suspense fallback={<Loading />}><UserProfile /></Suspense> },
     ],
   },
   {

@@ -24,6 +24,10 @@ body {
     font-family: Arial, sans-serif;
 }
 
+main {
+    padding-top: 50px;
+}
+
 a {
     text-decoration: none;
     color: inherit;

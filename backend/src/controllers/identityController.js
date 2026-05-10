@@ -7,6 +7,7 @@ import {
   registerIdentity,
   authenticateIdentity,
   getIdentityPublicById,
+  getIdentityPublicByNickname,
   updateIdentityById,
 } from "../services/identity.service.js";
 
@@ -335,6 +336,40 @@ export async function updateMe(req, res) {
 
   } catch (error) {
     console.error("Error en updateMe:", error);
+
+    return res.status(500).json({
+      success: false,
+      error: "Internal Server Error",
+    });
+  }
+}
+
+export async function getProfileByNickname(req, res) {
+  const { nickname } = req.params;
+
+  if (!nickname) {
+    return res.status(400).json({
+      success: false,
+      error: "Nickname is required",
+    });
+  }
+
+  try {
+    const identity = await getIdentityPublicByNickname(nickname);
+
+    if (!identity) {
+      return res.status(404).json({
+        success: false,
+        error: "Profile not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      identity,
+    });
+  } catch (error) {
+    console.error("Error en getProfileByNickname:", error);
 
     return res.status(500).json({
       success: false,

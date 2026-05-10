@@ -1,0 +1,57 @@
+/* Contenedor principal */
+.tabsContainer {
+    width: 100%;
+}
+
+/* Contenedor de la lista de botones */
+.tabsList {
+    display: flex;
+    justify-content: center; /* Valor por defecto */
+}
+
+/* Modificadores de posicionamiento */
+.left {
+    justify-content: flex-start;
+}
+
+.right {
+    justify-content: flex-end;
+}
+
+/* Estilo base de cada botón */
+.tabsList button {
+    background: none;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--primary-color);
+    position: relative;
+    transition: color 0.2s ease;
+}
+
+.tabsList button:hover {
+    color: var(--light-primary-color);
+}
+
+/* Estado activo */
+.active {
+    color: var(--primary-color) !important;
+}
+
+.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; /* Alineado con el borde del contenedor */
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+}
+
+/* Contenedor del contenido */
+.tabsPanel {
+    height: 300px;
+    padding-top: 15px;
+}

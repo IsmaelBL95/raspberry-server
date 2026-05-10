@@ -10,25 +10,34 @@
   font-weight: bold;
   color: white;
   user-select: none;
-}
-
-/* Variantes de tamaño */
-.small {
-  width: 32px;
-  height: 32px;
-  font-size: 0.8rem;
-}
-
-.medium {
   width: 40px;
   height: 40px;
   font-size: 1.1rem;
 }
 
-.large {
+/* Variantes de tamaño */
+.S {
+  width: 32px;
+  height: 32px;
+  font-size: 0.8rem;
+}
+
+.L {
   width: 48px;
   height: 48px;
   font-size: 1.5rem;
+}
+
+.XL {
+  width: 64px;
+  height: 64px;
+  font-size: 2rem;
+}
+
+.XXL {
+  width: 128px;
+  height: 128px;
+  font-size: 4rem;
 }
 
 .image {
@@ -36,4 +45,3 @@
   height: 100%;
   object-fit: cover;
 }
-

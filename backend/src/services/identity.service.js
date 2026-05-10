@@ -76,6 +76,17 @@ export async function getIdentityPublicById(identityId) {
   return sanitizeIdentity(identity);
 }
 
+export async function getIdentityPublicByNickname(nickname) {
+  if (!nickname || typeof nickname !== "string") return null;
+
+  const cleanNickname = nickname.trim().toLowerCase();
+  const identity = await Identity.findOne({ nicknameCanonical: cleanNickname });
+
+  if (!identity) return null;
+
+  return sanitizeIdentity(identity);
+}
+
 /**
  * Actualización opcional de perfil.
  * No forma parte del registro.

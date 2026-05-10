@@ -108,7 +108,7 @@ const Login = () => {
       }
 
       await refreshUser();
-      navigate('/dashboard');
+      navigate('/');
 
     } catch (error) {
       setErrors({

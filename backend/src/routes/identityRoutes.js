@@ -4,6 +4,7 @@ import {
   register,
   login,
   me,
+  getProfileByNickname,
   logout,
   updateMe,
 } from "../controllers/identityController.js";
@@ -18,5 +19,6 @@ router.post("/login", requireMongo, asyncHandler(login));
 router.get("/me", requireMongo, validateIdentityToken, asyncHandler(me));
 router.patch("/me", requireMongo, validateIdentityToken, asyncHandler(updateMe));
 router.post("/logout", asyncHandler(logout));
+router.get("/:nickname", requireMongo, asyncHandler(getProfileByNickname));
 
 export default router;

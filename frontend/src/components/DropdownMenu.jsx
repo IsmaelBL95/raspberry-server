@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Avatar from '../elements/Avatar';
 import styles from './styles/DropdownMenu.module.css';
 
-const DropdownMenu = ({ user, menuItems }) => {
+const DropdownMenu = ({ user, menuItems, avatarSize }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -25,7 +25,7 @@ const DropdownMenu = ({ user, menuItems }) => {
         aria-haspopup="true"
         aria-expanded={isOpen}
       >
-        <Avatar src={user?.image} name={user?.name} />
+        <Avatar src={user?.image} name={user?.name} size={avatarSize} />
       </button>
 
       {isOpen && (

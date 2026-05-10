@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from './styles/Avatar.module.css';
 import avatarPlaceholder from '../assets/AvatarPlaceholder.png';
 
-const Avatar = ({ src, name = '', size = 'medium' }) => {
+const Avatar = ({ src, name = '', size = 'M' }) => {
   const [imgError, setImgError] = useState(false);
 
   // Generar iniciales (Máximo 2 letras)

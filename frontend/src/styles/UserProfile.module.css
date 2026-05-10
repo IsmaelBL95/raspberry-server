@@ -1,0 +1,24 @@
+.profileHeader {
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(170deg, var(--light-complement-color), var(--primary-color));
+}
+
+.profileHeaderContainer {
+    width: 90%;
+    max-width: 600px;
+}
+
+.profilePicture {
+    padding-top: 12px;
+}
+
+.profileContent {
+    display: flex;
+    justify-content: center;
+}
+
+.profileContent div{
+    max-width: 600px;
+}
