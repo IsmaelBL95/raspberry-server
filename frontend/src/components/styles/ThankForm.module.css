@@ -1,0 +1,93 @@
+.form {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 1rem;
+  background: #fff;
+  margin-bottom: 1rem;
+}
+
+.title {
+  margin: 0 0 0.8rem;
+  color: var(--primary-color);
+}
+
+.amountGroup {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.8rem;
+}
+
+.amountButton {
+  border: 1px solid var(--light-complement-color);
+  border-radius: 10px;
+  background: #fff;
+  width: 52px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.amountButton img {
+  width: 22px;
+  height: 22px;
+}
+
+.amountButton span {
+  position: absolute;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.active {
+  box-shadow: 0 0 0 2px var(--primary-color) inset;
+}
+
+.label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 88px;
+  border: 1px solid #d6d6d6;
+  border-radius: 10px;
+  padding: 0.7rem;
+  resize: vertical;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.7rem;
+}
+
+.counter {
+  color: #666;
+}
+
+.submitButton {
+  border: none;
+  border-radius: 999px;
+  background: var(--primary-color);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  margin-top: 0.6rem;
+  color: #b00020;
+}

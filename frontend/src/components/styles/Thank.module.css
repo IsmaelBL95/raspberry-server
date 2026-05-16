@@ -1,136 +1,107 @@
 .thankCard {
   display: flex;
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 16px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-  gap: 24px;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 14px;
+  background: #fff;
 }
 
-.thankCard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-}
-
-/* Columna de avatares y puntos */
 .visualSide {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  min-width: 60px;
 }
 
 .avatarStack {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 0.4rem;
 }
 
 .avatarWrapper {
-  border: 3px solid #f8f9fa;
+  border: 2px solid var(--light-complement-color);
   border-radius: 50%;
   padding: 2px;
-  background: white;
-}
-
-/* Columna de información */
-.infoSide {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  flex: 1;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 10px;
-}
-
-.usersLog {
-  font-size: 0.95rem;
-  color: #333;
-}
-
-.usersLog strong {
-  color: var(--primary-color);
-  font-weight: 600;
-}
-
-.date {
-  font-size: 0.8rem;
-  color: #999;
-  font-variant: small-caps;
-}
-
-.reason {
-  margin: 0;
-  font-size: 1rem;
-  color: #555;
-  line-height: 1.5;
-  font-style: italic;
-  position: relative;
-  padding-left: 15px;
-  border-left: 3px solid var(--light-complement-color);
+  background: #fff;
 }
 
 .connector {
-  height: 40px; /* Incrementado un poco para dar espacio al corazón */
   width: 2px;
+  height: 48px;
   background: var(--light-complement-color);
-  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 
-.badgeContainer {
+.amountBadge {
   position: absolute;
+  width: 32px;
+  height: 32px;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 32px;
-  height: 32px;
 }
 
 .heartIcon {
   width: 100%;
   height: 100%;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
 
-.amountBadge {
+.amountBadge span {
   position: absolute;
-  color: white; /* O el color que contraste con tu PinkHeart.svg */
-  font-size: 1rem;
+  color: #fff;
   font-weight: 800;
-  /* Ajuste fino para centrar el número según la forma del SVG */
-  transform: translateY(-1px); 
-  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  font-size: 0.9rem;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 }
 
-/* Ajuste para móviles */
+.infoSide {
+  flex: 1;
+  min-width: 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.usersLog {
+  color: #303030;
+}
+
+.usersLog strong {
+  color: var(--primary-color);
+}
+
+.date {
+  color: #777;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.reason {
+  margin-top: 0.45rem;
+  padding-left: 0.7rem;
+  border-left: 3px solid var(--light-complement-color);
+  color: #555;
+}
+
 @media (max-width: 500px) {
   .thankCard {
     flex-direction: column;
-    gap: 15px;
   }
-  .visualSide {
-    flex-direction: row;
-    min-width: auto;
-  }
+
   .avatarStack {
     flex-direction: row;
-    width: 100%;
-    justify-content: center;
   }
+
   .connector {
-    width: 40px;
+    width: 48px;
     height: 2px;
   }
 }
